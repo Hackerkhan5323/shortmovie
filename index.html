@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Watch award-winning short movies from independent filmmakers around the world. Support charity with your views.">
+    <meta name="keywords" content="short films, indie movies, online cinema, film charity">
+    <meta name="author" content="ShortFilmHub">
+    <meta property="og:title" content="ShortFilmHub - Watch & Support">
+    <meta property="og:description" content="Premium short movies that support charitable causes">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://shortfilmhub.index.htmlcom">
+    <title>ShortFilmHub | Watch & Support Charity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --charity-color: #27ae60;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Background selector styles */
+        .background-selector {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .bg-toggle-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .bg-toggle-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .bg-options {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+            width: 200px;
+        }
+
+        .bg-options.show {
+            display: block;
+        }
+
+        .bg-option {
+            padding: 8px;
+            margin: 5px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .bg-option:hover {
+            background: #f0f0f0;
+        }
+
+        /* Background classes */
+        .bg-default {
+            background-color: #f5f5f5;
+        }
+
+        .bg-dark {
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+        }
+
+        .bg-dark .movie-card, .bg-dark header, .bg-dark footer {
+            background-color: #2a2a2a;
+            color: #f0f0f0;
+        }
+
+        .bg-dark .movie-card {
+            border: 1px solid #444;
+        }
+
+        .bg-cinema {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba');
+            background-size: cover;
+            color: white;
+        }
+
+        .bg-cinema .movie-card {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: 1px solid #555;
+        }
+
+        .bg-cinema header, .bg-cinema footer {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .tagline {
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            padding: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .user-controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .user-level-selector, .charity-selector {
+            padding: 0.5rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .optimize-btn {
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .optimize-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .ad-container {
+            margin: 1rem auto;
+            padding: 1rem;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            max-width: 1200px;
+        }
+
+        .ad-label {
+            font-size: 0.8rem;
+            color: #777;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        main {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .featured-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background-color: var(--primary-color);
+        }
+
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .movie-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .movie-info {
+            padding: 1rem;
+        }
+
+        .movie-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 0.5rem;
+        }
+
+        .movie-description {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .watch-btn {
+            display: block;
+            width: 100%;
+            padding: 0.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .watch-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .charity-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--charity-color);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .charity-icon {
+            font-size: 0.9rem;
+        }
+
+        .charity-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .charity-modal.show {
+            display: flex;
+        }
+
+        .charity-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+
+        .close-charity {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .charity-list {
+            margin-top: 1rem;
+        }
+
+        .charity-item {
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .charity-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .charity-item.selected {
+            background-color: #e1f5fe;
+            border-color: var(--primary-color);
+        }
+
+        .confirm-charity {
+            margin-top: 1rem;
+            padding: 0.7rem 1.5rem;
+            background-color: var(--charity-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .confirm-charity:hover {
+            background-color: #219653;
+        }
+
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .social-icons {
+            margin-bottom: 1.5rem;
+        }
+
+        .social-icons a {
+            color: white;
+            margin: 0 0.5rem;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: var(--primary-color);
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            nav a {
+                margin: 0 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .user-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .user-level-selector, .charity-selector, .optimize-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .movies-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .background-selector {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            .bg-toggle-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .bg-options {
+                width: 160px;
+                bottom: 50px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-default">
+    <!-- Background Selector -->
+    <div class="background-selector">
+        <button class="bg-toggle-btn" id="bgToggle">
+            <i class="fas fa-palette"></i>
+        </button>
+        <div class="bg-options" id="bgOptions">
+            <div class="bg-option" data-bg="default">Default</div>
+            <div class="bg-option" data-bg="dark">Dark Mode</div>
+            <div class="bg-option" data-bg="cinema">Cinema Theme</div>
+        </div>
+    </div>
+
+    <!-- Charity Selection Modal -->
+    <div class="charity-modal" id="charityModal">
+        <div class="charity-content">
+            <span class="close-charity" id="closeCharity">&times;</span>
+            <h2>Select a Charity to Support</h2>
+            <p>By selecting a charity, a portion of our revenue from your views will be donated to your chosen cause.</p>
+            <div class="charity-list" id="charityList">
+                <div class="charity-item" data-charity="unicef">
+                    <strong>UNICEF</strong> - Helping children worldwide
+                </div>
+                <div class="charity-item" data-charity="wwf">
+                    <strong>WWF</strong> - Wildlife conservation
+                </div>
+                <div class="charity-item" data-charity="redcross">
+                    <strong>Red Cross</strong> - Disaster relief
+                </div>
+                <div class="charity-item" data-charity="directrelief">
+                    <strong>Direct Relief</strong> - Medical assistance
+                </div>
+            </div>
+            <button class="confirm-charity" id="confirmCharity">Confirm Selection</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">ShortFilmHub</div>
+        <div class="tagline">Watch Great Films. Support Good Causes.</div>
+        
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Genres</a>
+            <a href="#">Filmmakers</a>
+            <a href="#">Festivals</a>
+            <a href="#">About</a>
+        </nav>
+        
+        <div class="user-controls">
+            <select class="user-level-selector" id="userLevel">
+                <option value="basic">Basic User</option>
+                <option value="standard">Standard User</option>
+                <option value="premium">Premium User</option>
+            </select>
+            
+            <button class="optimize-btn" id="optimizeBtn">Optimize Experience</button>
+            
+            <select class="charity-selector" id="charitySelector">
+                <option value="">Select Charity</option>
+                <option value="unicef">UNICEF</option>
+                <option value="wwf">WWF</option>
+                <option value="redcross">Red Cross</option>
+                <option value="directrelief">Direct Relief</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- Top Ad Banner -->
+    <div class="ad-container">
+        <div class="ad-label">Advertisement</div>
+        <!-- Google AdSense Ad Unit -->
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_ID"></script>
+        <!-- Replace YOUR_ADSENSE_ID with your actual AdSense ID -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-YOUR_ADSENSE_ID"
+             data-ad-slot="YOUR_AD_SLOT_ID"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+
+    <main>
+        <section class="featured-section">
+            <h2 class="section-title">Featured Short Films</h2>
+            <div class="movies-grid">
+                <!-- Movie Card 1 -->
+                <div class="movie-card">
+                    <img src="https://via.placeholder.com/400x225?text=Short+Film+1" alt="The Last Sunset" class="movie-poster">
+                    <div class="charity-badge">
+                        <i class="fas fa-heart charity-icon"></i>
+                        Supports Charity
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">The Last Sunset</h3>
+                        <div class="movie-meta">
+                            <span>15 min</span>
+                            <span>Drama</span>
+                        </div>
+                        <p class="movie-description">A poignant story about an elderly man revisiting his childhood home one last time before it's demolished.</p>
+                        <a href="#" class="watch-btn">Watch Now</a>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 2 -->
+                <div class="movie-card">
+                    <img src="https://via.placeholder.com/400x225?text=Short+Film+2" alt="Pixel Dreams" class="movie-poster">
+                    <div class="charity-badge">
+                        <i class="fas fa-heart charity-icon"></i>
+                        Supports Charity
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">Pixel Dreams</h3>
+                        <div class="movie-meta">
+                            <span>12 min</span>
+                            <span>Sci-Fi</span>
+                        </div>
+                        <p class="movie-description">In a world where dreams can be programmed, one hacker discovers a glitch that reveals hidden memories.</p>
+                        <a href="#" class="watch-btn">Watch Now</a>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 3 -->
+                <div class="movie-card">
+                    <img src="https://via.placeholder.com/400x225?text=Short+Film+3" alt="Bread and Salt" class="movie-poster">
+                    <div class="charity-badge">
+                        <i class="fas fa-heart charity-icon"></i>
+                        Supports Charity
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">Bread and Salt</h3>
+                        <div class="movie-meta">
+                            <span>18 min</span>
+                            <span>Documentary</span>
+                        </div>
+                        <p class="movie-description">A day in the life of a Syrian refugee family trying to maintain their culinary traditions in a new land.</p>
+                        <a href="#" class="watch-btn">Watch Now</a>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 4 -->
+                <div class="movie-card">
+                    <img src="https://via.placeholder.com/400x225?text=Short+Film+4" alt="The Kite" class="movie-poster">
+                    <div class="charity-badge">
+                        <i class="fas fa-heart charity-icon"></i>
+                        Supports Charity
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">The Kite</h3>
+                        <div class="movie-meta">
+                            <span>10 min</span>
+                            <span>Family</span>
+                        </div>
+                        <p class="movie-description">A young girl's determination to fly her kite leads to an unexpected friendship across cultural divides.</p>
+                        <a href="#" class="watch-btn">Watch Now</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mid-Page Ad Banner -->
+        <div class="ad-container">
+            <div class="ad-label">Advertisement</div>
+            <!-- Google AdSense Ad Unit -->
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_ID"></script>
+            <!-- Replace YOUR_ADSENSE_ID with your actual AdSense ID -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-YOUR_ADSENSE_ID"
+                 data-ad-slot="YOUR_AD_SLOT_ID"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+
+        <section class="featured-section">
+            <h2 class="section-title">New Releases</h2>
+            <div class="movies-grid">
+                <!-- Movie Card 5 -->
+                <div class="movie-card">
+                    <img src="https://via.placeholder.com/400x225?text=Short+Film+5" alt="Silent Echo" class="movie-poster">
+                    <div class="charity-badge">
+                        <i class="fas fa-heart charity-icon"></i>
+                        Supports Charity
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">Silent Echo</h3>
+                        <div class="movie-meta">
+                            <span>14 min</span>
+                            <span>Thriller</span>
+                        </div>
+                        <p class="movie-description">A deaf woman must use her heightened other senses to survive when she becomes the target of a mysterious stalker.</p>
+                        <a href="#" class="watch-btn">Watch Now</a>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 6 -->
+                <div class="movie-card">
+                    <img src="https://via.placeholder.com/400x225?text=Short+Film+6" alt="Paper Planes" class="movie-poster">
+                    <div class="charity-badge">
+                        <i class="fas fa-heart charity-icon"></i>
+                        Supports Charity
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">Paper Planes</h3>
+                        <div class="movie-meta">
+                            <span>22 min</span>
+                            <span>Drama</span>
+                        </div>
+                        <p class="movie-description">Two strangers connect through messages sent via paper planes across the alley between their apartment buildings.</p>
+                        <a href="#" class="watch-btn">Watch Now</a>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 7 -->
+                <div class="movie-card">
+                    <img src="https://via.placeholder.com/400x225?text=Short+Film+7" alt="The Baker's Son" class="movie-poster">
+                    <div class="charity-badge">
+                        <i class="fas fa-heart charity-icon"></i>
+                        Supports Charity
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">The Baker's Son</h3>
+                        <div class="movie-meta">
+                            <span>16 min</span>
+                            <span>Comedy</span>
+                        </div>
+                        <p class="movie-description">A young man tries to impress his crush by pretending to be a master baker, with hilarious results.</p>
+                        <a href="#" class="watch-btn">Watch Now</a>
+                    </div>
+                </div>
+                
+                <!-- Movie Card 8 -->
+                <div class="movie-card">
+                    <img src="https://via.placeholder.com/400x225?text=Short+Film+8" alt="Midnight Radio" class="movie-poster">
+                    <div class="charity-badge">
+                        <i class="fas fa-heart charity-icon"></i>
+                        Supports Charity
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">Midnight Radio</h3>
+                        <div class="movie-meta">
+                            <span>19 min</span>
+                            <span>Mystery</span>
+                        </div>
+                        <p class="movie-description">A late-night radio host receives a call that seems to be from the future - or is it something more sinister?</p>
+                        <a href="#" class="watch-btn">Watch Now</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Ad Banner -->
+    <div class="ad-container">
+        <div class="ad-label">Advertisement</div>
+        <!-- Google AdSense Ad Unit -->
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_ID"></script>
+        <!-- Replace YOUR_ADSENSE_ID with your actual AdSense ID -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-YOUR_ADSENSE_ID"
+             data-ad-slot="YOUR_AD_SLOT_ID"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">About Us</a>
+            <a href="#">Filmmaker Resources</a>
+            <a href="#">Submit Your Film</a>
+            <a href="#">Charity Partners</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact</a>
+        </div>
+        
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#"><i class="fab fa-vimeo-v"></i></a>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2023 ShortFilmHub. All rights reserved. Part of your viewing supports charitable causes.
+        </div>
+    </footer>
+
+    <script>
+        // Background Selector Functionality
+        const bgToggle = document.getElementById('bgToggle');
+        const bgOptions = document.getElementById('bgOptions');
+        
+        bgToggle.addEventListener('click', () => {
+            bgOptions.classList.toggle('show');
+        });
+        
+        document.querySelectorAll('.bg-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const bgClass = option.getAttribute('data-bg');
+                document.body.className = `bg-${bgClass}`;
+                bgOptions.classList.remove('show');
+                
+                // Save preference to localStorage
+                localStorage.setItem('preferredBackground', bgClass);
+            });
+        });
+        
+        // Load saved background preference
+        const savedBg = localStorage.getItem('preferredBackground');
+        if (savedBg) {
+            document.body.className = `bg-${savedBg}`;
+        }
+        
+        // User Level Optimization
+        const userLevel = document.getElementById('userLevel');
+        const optimizeBtn = document.getElementById('optimizeBtn');
+        
+        optimizeBtn.addEventListener('click', () => {
+            const level = userLevel.value;
+            let message = '';
+            
+            switch(level) {
+                case 'basic':
+                    message = 'Optimized for basic viewing experience. Enjoy our free content!';
+                    break;
+                case 'standard':
+                    message = 'Optimized for standard users. You now have access to higher quality streams.';
+                    break;
+                case 'premium':
+                    message = 'Premium experience activated! Enjoy ad-free viewing and exclusive content.';
+                    break;
+            }
+            
+            alert(message);
+            localStorage.setItem('userLevel', level);
+        });
+        
+        // Load saved user level
+        const savedLevel = localStorage.getItem('userLevel');
+        if (savedLevel) {
+            userLevel.value = savedLevel;
+        }
+        
+        // Charity Selection
+        const charitySelector = document.getElementById('charitySelector');
+        const charityModal = document.getElementById('charityModal');
+        const closeCharity = document.getElementById('closeCharity');
+        const confirmCharity = document.getElementById('confirmCharity');
+        const charityList = document.getElementById('charityList');
+        let selectedCharity = null;
+        
+        charitySelector.addEventListener('change', (e) => {
+            if (e.target.value) {
+                charityModal.classList.add('show');
+                selectedCharity = e.target.value;
+                
+                // Highlight the selected charity in the modal
+                document.querySelectorAll('.charity-item').forEach(item => {
+                    item.classList.remove('selected');
+                    if (item.getAttribute('data-charity') === selectedCharity) {
+                        item.classList.add('selected');
+                    }
+                });
+            }
+        });
+        
+        closeCharity.addEventListener('click', () => {
+            charityModal.classList.remove('show');
+            charitySelector.value = '';
+        });
+        
+        // Select charity from modal list
+        charityList.addEventListener('click', (e) => {
+            const item = e.target.closest('.charity-item');
+            if (item) {
+                document.querySelectorAll('.charity-item').forEach(i => {
+                    i.classList.remove('selected');
+                });
+                item.classList.add('selected');
+                selectedCharity = item.getAttribute('data-charity');
+            }
+        });
+        
+        confirmCharity.addEventListener('click', () => {
+            if (selectedCharity) {
+                alert(`Thank you! Your views will now support ${getCharityName(selectedCharity)}.`);
+                localStorage.setItem('selectedCharity', selectedCharity);
+                charityModal.classList.remove('show');
+                
+                // Update the selector to show the selected charity
+                charitySelector.value = selectedCharity;
+            }
+        });
+        
+        // Load saved charity
+        const savedCharity = localStorage.getItem('selectedCharity');
+        if (savedCharity) {
+            charitySelector.value = savedCharity;
+        }
+        
+        function getCharityName(charityId) {
+            switch(charityId) {
+                case 'unicef': return 'UNICEF';
+                case 'wwf': return 'WWF';
+                case 'redcross': return 'Red Cross';
+                case 'directrelief': return 'Direct Relief';
+                default: return 'the selected charity';
+            }
+        }
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === charityModal) {
+                charityModal.classList.remove('show');
+                charitySelector.value = '';
+            }
+        });
+    </script>
+</body>
+</html>
